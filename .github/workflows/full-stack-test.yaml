@@ -65,7 +65,7 @@ jobs:
       - name: Install packages
         run: pip install requests
       - name: Run tests
-        run: bin/test-full-stack
+        run: bin/test-full-stack.py
       - name: Get Docker logs
         if: ${{ failure() }}
         run: docker compose logs --timestamps > docker-logs.txt
