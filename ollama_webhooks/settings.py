@@ -242,7 +242,7 @@ SENTRY_DEBUG = bool(os.environ.get("SENTRY_DEBUG", DEBUG))
 if SENTRY_DSN:
     sentry_sdk.init(
         integrations=[
-            sentry_celery.CeleryIntegration(monitor_beat_tasks=True),
+            sentry_celery.CeleryIntegration(),
             sentry_django.DjangoIntegration(),
             sentry_logging.LoggingIntegration(
                 level=logging.INFO, event_level=logging.WARNING
