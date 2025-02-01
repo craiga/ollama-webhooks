@@ -56,9 +56,10 @@ jobs:
       - name: Set up environment
         run: |
           {
-            echo "WEBHOOK_URL=http://host.docker.internal:11436"
+            echo "ROOT_LOG_LEVEL=DEBUG"
             echo "SECRET_KEY=$(openssl rand -hex 50)"
             echo "SECURE_SSL_REDIRECT="
+            echo "WEBHOOK_URL=http://172.17.0.1:11436"
           } > .env
       - name: Start the stack
         run: docker compose up --detach
@@ -67,6 +68,8 @@ jobs:
       - name: Run tests
         timeout-minutes: 5
         run: bin/test-full-stack.py
+        env:
+          PYTHONUNBUFFERED: 1
       - name: Get Docker logs
         if: ${{ failure() }}
         run: docker compose logs --timestamps > docker-logs.txt
