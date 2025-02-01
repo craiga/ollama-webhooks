@@ -59,17 +59,20 @@ jobs:
             echo "ROOT_LOG_LEVEL=DEBUG"
             echo "SECRET_KEY=$(openssl rand -hex 50)"
             echo "SECURE_SSL_REDIRECT="
-            echo "WEBHOOK_URL=http://host-gateway:8434"
+            echo "WEBHOOK_URL=http://test-receiver:11436"
           } > .env
       - name: Start the stack
         run: docker compose up --detach
-      - name: Install packages
-        run: pip install requests
       - name: Run tests
         timeout-minutes: 1
-        run: bin/test-full-stack.py
-        env:
-          PYTHONUNBUFFERED: 1
+        run: |
+          EXPECTED_JOB=$(curl http://localhost:11435/api/generate -d '{"model": "llama3.2", "prompt": "Why is the sky blue?"}' | jq ".job" -r)
+          while true
+          do
+            if docker compose logs test-receiver | grep -q "$EXPECTED_JOB"; then
+              exit
+            fi
+          done
       - name: Get Docker logs
         if: ${{ failure() }}
         run: docker compose logs --timestamps > docker-logs.txt
