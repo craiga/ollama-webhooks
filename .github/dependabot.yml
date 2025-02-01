@@ -1,15 +1,5 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    allow:
-      - dependency-type: "all"
-    versioning-strategy: increase-if-necessary
-    groups:
-      npm:
-        patterns: "*"
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
@@ -19,7 +9,8 @@ updates:
     groups:
       pip:
         applies-to: version-updates
-        patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -28,4 +19,5 @@ updates:
       - dependency-type: "all"
     groups:
       github-actions:
-        patterns: "*"
+        patterns:
+          - "*"

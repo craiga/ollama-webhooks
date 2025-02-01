@@ -242,7 +242,7 @@ SENTRY_DEBUG = bool(os.environ.get("SENTRY_DEBUG", DEBUG))
 if SENTRY_DSN:
     sentry_sdk.init(
         integrations=[
-            sentry_celery.CeleryIntegration(monitor_beat_tasks=True),
+            sentry_celery.CeleryIntegration(),
             sentry_django.DjangoIntegration(),
             sentry_logging.LoggingIntegration(
                 level=logging.INFO, event_level=logging.WARNING
@@ -379,5 +379,5 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = int(
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 OLLAMA_TIMEOUT = int(os.environ.get("OLLAMA_TIMEOUT", CELERY_TASK_SOFT_TIME_LIMIT))
 WEBHOOK_METHOD = os.environ.get("WEBHOOK_METHOD", "POST")
-WEBHOOK_URL = os.environ["WEBHOOK_URL"]
+WEBHOOK_URL = os.environ.get("WEBHOOK_URL", "http://localhost")
 WEBHOOK_TIMEOUT = float(int(os.environ.get("WEBHOOK_TIMEOUT", 5)))

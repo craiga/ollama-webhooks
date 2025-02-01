@@ -81,5 +81,10 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
+  test-receiver:
+    image: mendhak/http-https-echo:latest
+    environment:
+      - HTTP_PORT=11436
+
 volumes:
   db-data:
