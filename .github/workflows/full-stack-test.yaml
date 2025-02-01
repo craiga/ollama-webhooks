@@ -59,14 +59,14 @@ jobs:
             echo "ROOT_LOG_LEVEL=DEBUG"
             echo "SECRET_KEY=$(openssl rand -hex 50)"
             echo "SECURE_SSL_REDIRECT="
-            echo "WEBHOOK_URL=http://172.17.0.1:11436"
+            echo "WEBHOOK_URL=http://172.17.0.1:8434"
           } > .env
       - name: Start the stack
         run: docker compose up --detach
       - name: Install packages
         run: pip install requests
       - name: Run tests
-        timeout-minutes: 5
+        timeout-minutes: 1
         run: bin/test-full-stack.py
         env:
           PYTHONUNBUFFERED: 1
