@@ -379,5 +379,5 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = int(
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 OLLAMA_TIMEOUT = int(os.environ.get("OLLAMA_TIMEOUT", CELERY_TASK_SOFT_TIME_LIMIT))
 WEBHOOK_METHOD = os.environ.get("WEBHOOK_METHOD", "POST")
-WEBHOOK_URL = os.environ["WEBHOOK_URL"]
+WEBHOOK_URL = os.environ.get("WEBHOOK_URL", "http://localhost")
 WEBHOOK_TIMEOUT = float(int(os.environ.get("WEBHOOK_TIMEOUT", 5)))
