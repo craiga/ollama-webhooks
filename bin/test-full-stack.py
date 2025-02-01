@@ -55,10 +55,14 @@ def main() -> None:
     )
     response.raise_for_status()
     expected_job = response.json()["job"]
+    print(f"Expecting {expected_job}")  # noqa: T201
 
     with WebhookJobListener(("localhost", 11436), WebhookRequestHandler) as server:
-        while server.next_job() != expected_job:
-            pass
+        while True:
+            job = server.next_job()
+            print(f"Received webhook for {job}")  # noqa: T201
+            if job == expected_job:
+                return
 
 
 if __name__ == "__main__":

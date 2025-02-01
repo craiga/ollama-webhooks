@@ -65,6 +65,7 @@ jobs:
       - name: Install packages
         run: pip install requests
       - name: Run tests
+        timeout-minutes: 5
         run: bin/test-full-stack.py
       - name: Get Docker logs
         if: ${{ failure() }}
