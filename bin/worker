@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -ex
+
+if [ -z "$DEBUG" ]
+then
+    python manage.py check --deploy --fail-level WARNING
+    python manage.py migrate --check
+fi
+
+REMAP_SIGTERM=SIGQUIT celery --app ollama_webhooks worker

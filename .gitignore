@@ -1,0 +1,9 @@
+*.pyc
+.mypy_cache
+.tmp/
+.tool-versions
+.vscode/
+/.env
+/.nova
+/.python-version
+/pg_dump

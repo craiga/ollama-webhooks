@@ -1,0 +1,26 @@
+name: Python Checks
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  mypy:
+    name: mypy
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Repo
+        uses: actions/checkout@v4.2.2
+      - name: Read Python version
+        run: echo "PYTHON_VERSION=$(sed s/python-// < runtime.txt)" >> "$GITHUB_ENV"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+      - name: Setup
+        run: pip install --requirement requirements.txt
+      - name: mypy
+        run: mypy .

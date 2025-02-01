@@ -1,0 +1,96 @@
+name: Django
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  pytest:
+    name: pytest
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgres://ollama-webhooks:security_is_important@localhost/ollama-webhooks
+      ROOT_LOG_LEVEL: DEBUG
+      REDIS_URL: redis://localhost:6379/0
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: ollama-webhooks
+          POSTGRES_PASSWORD: security_is_important
+          POSTGRES_DB: ollama-webhooks
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    steps:
+      - name: Clone Repo
+        uses: actions/checkout@v4.2.2
+      - name: Read Python version
+        run: echo "PYTHON_VERSION=$(sed s/python-// < runtime.txt)" >> "$GITHUB_ENV"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+      - name: Install spelling dictionaries
+        run: sudo apt-get install aspell-en
+      - name: Setup
+        run: pip install --requirement requirements.txt
+      - name: Run Tests
+        run: pytest --durations=20
+
+  check-django-configuration:
+    name: Check Django configuration
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Repo
+        uses: actions/checkout@v4.2.2
+      - name: Read Python version
+        run: echo "PYTHON_VERSION=$(sed s/python-// < runtime.txt)" >> "$GITHUB_ENV"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+      - name: Setup
+        run: pip install --requirement requirements.txt
+      - name: Test Django configured correctly
+        run: python manage.py check --deploy --fail-level INFO
+        env:
+          SECRET_KEY: Some very long and complex string which is very, very secure.
+          CANONICAL_HOST: somecanonicalhost.com
+
+  check-missing-migrations:
+    name: Check for missing Django migrations
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Repo
+        uses: actions/checkout@v4.2.2
+      - name: Read Python version
+        run: echo "PYTHON_VERSION=$(sed s/python-// < runtime.txt)" >> "$GITHUB_ENV"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+      - name: Setup
+        run: pip install --requirement requirements.txt
+      - name: Check for missing Django migrations
+        run: python manage.py makemigrations --dry-run --check --no-input

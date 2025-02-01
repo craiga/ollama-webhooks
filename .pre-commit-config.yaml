@@ -1,0 +1,85 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-toml
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: file-contents-sorter
+        files: ^(\.dictionary|.gitignore|requirements.*\.in|ollama-webhooks/scss/_colors\.scss)$
+        args: ["--ignore-case"]
+      - id: mixed-line-ending
+        args:
+          - "--fix=lf"
+      - id: trailing-whitespace
+
+  - repo: https://github.com/adamchainz/django-upgrade
+    rev: 1.22.2
+    hooks:
+      - id: django-upgrade
+        args: [--target-version, "5.0"]
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.19.1
+    hooks:
+      - id: pyupgrade
+        args: ["--py312-plus"]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.3
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        types_or: [markdown, yaml, json, toml]
+        additional_dependencies:
+          - prettier
+          - prettier-plugin-toml
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        files: bin/.*
+
+  - repo: https://github.com/crate-ci/typos
+    rev: dictgen-v0.3.1
+    hooks:
+      - id: typos
+
+  - repo: https://github.com/mrtazz/checkmake.git
+    rev: 0.2.2
+    hooks:
+      - id: checkmake
+
+  - repo: https://github.com/Mateusz-Grzelinski/actionlint-py
+    rev: v1.7.7.23
+    hooks:
+      - id: actionlint
+
+  - repo: local
+    hooks:
+      - id: no-auto-migrations
+        name: no auto-named migrations
+        entry: please provide a descriptive name for migrations
+        language: fail
+        types: ["python"]
+        files: .*/migrations/.*_auto_.*\.py$
+      - id: django-no-redundant-queryset-all
+        name: no redundant calls to queryset.all()
+        description: Check for redundant calls to the queryset `all()` method
+        entry: all\(\s*\)\.(count|filter|exclude|update)\(
+        language: pygrep
+        args: [--multiline]
+        types: [python]

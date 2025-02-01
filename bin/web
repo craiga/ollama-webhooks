@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -ex
+
+# https://gist.github.com/mihow/9c7f559807069a03e302605691f85572
+if [ -f .env ]
+then
+  # shellcheck disable=SC2046
+  export $(xargs < .env) || true
+fi
+
+if [ -z "$DEBUG" ]
+then
+    python manage.py check --deploy --fail-level WARNING
+fi
+
+python manage.py migrate --no-input
+
+gunicorn ollama_webhooks.wsgi --bind 0.0.0.0:8000 --log-file -

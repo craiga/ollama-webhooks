@@ -1,0 +1,109 @@
+[project]
+name = "Ollama Webhooks"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "ollama_webhooks.settings"
+filterwarnings = [
+  "error"
+]
+addopts = "--strict-markers --numprocesses=auto --dist=worksteal"
+env = "RICH_LOG_LEVEL=ERROR\nROOT_LOG_LEVEL=DEBUG\nDEBUG=\nROOT_LOG_HANDLERS="
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+strict = true
+show_error_codes = true
+enable_error_code = "ignore-without-code"
+mypy_path = ".mypy-stubs"
+
+[[tool.mypy.overrides]]
+module = [
+  "enchant.*",
+]
+ignore_missing_imports = true
+
+[tool.django-stubs]
+django_settings_module = "ollama_webhooks.settings"
+
+[tool.codespell]
+write-changes = true
+ignore-words = ".dictionary"
+skip = "requirements.txt"
+
+[tool.ruff]
+output-format = "full"
+
+[tool.ruff.format]
+preview = true
+
+[tool.ruff.lint]
+
+# Rule definitions are at https://docs.astral.sh/ruff/rules/.
+
+# Try to keep as many checks enabled as possible.
+# If there's a specific check that causes problems with a certain type of file,
+# consider adding an entry to per-file-ignores instead of here.
+
+select = ["ALL"]
+ignore = ["ANN401", "ANN1", "COM812", "ISC001"]
+
+extend-safe-fixes = [
+  "ANN201",
+  "ANN202",
+  "ANN204",
+  "ANN205",
+  "ANN206",
+  "C400",
+  "C408",
+  "D200",
+  "D400",
+  "E712",
+  "EM",
+  "F401",
+  "PERF102",
+  "PIE810",
+  "PT006",
+  "PT007",
+  "RSE102",
+  "RUF005",
+  "RUF015",
+  "SIM117",
+  "SIM118",
+  "T203",
+  "TCH",
+  "TRY003",
+  "TRY201",
+  "TRY201",
+  "TRY400",
+  "UP038",
+]
+extend-unsafe-fixes = [
+  # Replaces getattr(obj, "attr") with obj.attr when what you might want is
+  # getattr(obj, "attr", None).
+  "B009",
+  # Replaces setattr(obj, "attr", "value") with obj.attr = value. In some situations,
+  # we need to use setattr like this to pass mypy checks.
+  "B010",
+]
+
+[tool.ruff.lint.isort]
+section-order = ["future", "standard-library", "django", "third-party", "first-party", "local-folder"]
+
+[tool.ruff.lint.isort.sections]
+"django" = ["django"]
+
+[tool.ruff.lint.flake8-self]
+ignore-names = ["_meta", "_replace", "_default_manager"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.lint.flake8-unused-arguments]
+ignore-variadic-names = true
+
+[tool.ruff.lint.per-file-ignores]
+"**/management/commands/*.py" = ["N999"]
+"**/migrations/*.py" = ["RUF012"]
+"**/models.py" = ["D106"]
+"**/tests/**/*.py" = ["S101", "ARG001", "PLR2004"]
